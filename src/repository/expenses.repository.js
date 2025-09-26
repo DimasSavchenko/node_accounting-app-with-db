@@ -1,46 +1,24 @@
+/* eslint-disable indent */
+const { Op } = require('sequelize');
 const { Expense } = require('../models/Expense.model');
 
 const getAll = async (query) => {
-  const { userId, categories, from, to } = query;
-  let expenses = await Expense.findAll();
+  const { userId, categories, from, to } = query || {};
 
-  expenses = expenses.filter((expense) => {
-    if (userId && !categories) {
-      if (expense.userId !== +userId) {
-        return false;
-      }
-
-      return true;
-    }
-
-    if (categories) {
-      if (Array.isArray(categories)) {
-        const categoriesUpd = categories.map((item) => item.toLowerCase());
-
-        if (!categoriesUpd.includes(expense.category)) {
-          return false;
-        }
-      } else {
-        if (expense.category.toLowerCase() !== categories.toLowerCase()) {
-          return false;
-        }
-      }
-
-      return true;
-    }
-
-    if (from && new Date(expense.spentAt) < new Date(from)) {
-      return false;
-    }
-
-    if (to && new Date(expense.spentAt) > new Date(to)) {
-      return false;
-    }
-
-    return true;
+  return Expense.findAll({
+    where: {
+      ...(userId && { userId }),
+      ...(categories && { category: categories }),
+      ...(from || to
+        ? {
+            spentAt: {
+              ...(from && { [Op.gte]: new Date(from) }),
+              ...(to && { [Op.lte]: new Date(to) }),
+            },
+          }
+        : {}),
+    },
   });
-
-  return expenses;
 };
 
 const create = async ({ userId, spentAt, title, amount, category, note }) => {
@@ -66,6 +44,8 @@ const remove = async (id) => {
 
 const update = async ({ id, ...rest }) => {
   await Expense.update({ ...rest }, { where: { id } });
+
+  return getById(id);
 };
 
 module.exports = {

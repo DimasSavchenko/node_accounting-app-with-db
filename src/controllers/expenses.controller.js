@@ -13,10 +13,11 @@ const get = async (req, res) => {
 
 const create = async (req, res) => {
   const { userId, spentAt, title, amount, category, note } = req.body;
+
   const userAdded = await usersService.getById(userId);
 
   if (userAdded === null) {
-    res.sendStatus(400);
+    res.status(400).json({ error: 'User not found' });
 
     return;
   }
@@ -38,13 +39,13 @@ const create = async (req, res) => {
 };
 
 const getOne = async (req, res) => {
-  const { id } = req.params;
+  const { id } = req;
 
   try {
     const expense = await expensesService.getById(id);
 
     if (expense === null) {
-      res.sendStatus(404);
+      res.status(404).json({ error: 'Expense not found' });
 
       return;
     }
@@ -55,11 +56,11 @@ const getOne = async (req, res) => {
 };
 
 const remove = async (req, res) => {
-  const { id } = req.params;
+  const { id } = req;
   const expenseAdded = await expensesService.getById(id);
 
   if (expenseAdded === null) {
-    res.sendStatus(404);
+    res.status(404).json({ error: 'Expense not found' });
 
     return;
   }
@@ -73,20 +74,32 @@ const remove = async (req, res) => {
 };
 
 const update = async (req, res) => {
-  const { id } = req.params;
+  const { id } = req;
+  const { spentAt, title, amount, category, note } = req.body;
+
+  if (Object.keys(req.body).length === 0) {
+    res.status(400).json({ error: 'No fields to update' });
+
+    return;
+  }
 
   const expenseAdded = await expensesService.getById(id);
 
   if (expenseAdded === null) {
-    res.sendStatus(404);
+    res.status(404).json({ error: 'Expense not found' });
 
     return;
   }
 
   try {
-    await expensesService.update({ id, ...req.body });
-
-    const expenseUpdated = await expensesService.getById(id);
+    const expenseUpdated = await expensesService.update({
+      id,
+      spentAt,
+      title,
+      amount,
+      category,
+      note,
+    });
 
     res.json(expenseUpdated);
   } catch (error) {

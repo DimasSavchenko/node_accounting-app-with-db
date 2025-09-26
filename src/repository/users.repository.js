@@ -1,6 +1,6 @@
 const { User } = require('../models/User.model');
 
-const normilizeUser = ({ id, name }) => {
+const normalizeUser = ({ id, name }) => {
   return {
     id,
     name,
@@ -25,6 +25,8 @@ const remove = async (id) => {
 
 const update = async ({ id, name }) => {
   await User.update({ name }, { where: { id } });
+
+  return getById(id);
 };
 
 module.exports = {
@@ -33,5 +35,5 @@ module.exports = {
   getById,
   remove,
   update,
-  normilizeUser,
+  normalizeUser,
 };

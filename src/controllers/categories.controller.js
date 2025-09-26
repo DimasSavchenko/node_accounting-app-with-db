@@ -1,10 +1,10 @@
-const usersService = require('../repository/users.repository');
+const categoriesService = require('../repository/categories.repository');
 
 const get = async (_req, res) => {
   try {
-    const users = await usersService.getAll();
+    const categories = await categoriesService.getAll();
 
-    res.json(users.map((user) => usersService.normalizeUser(user)));
+    res.json(categories);
   } catch (error) {
     res.sendStatus(500);
   }
@@ -20,9 +20,9 @@ const create = async (req, res) => {
   }
 
   try {
-    const user = await usersService.create(name);
+    const category = await categoriesService.create(name);
 
-    res.status(201).json(usersService.normalizeUser(user));
+    res.status(201).json(category);
   } catch (error) {
     res.sendStatus(500);
   }
@@ -32,14 +32,14 @@ const getOne = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const user = await usersService.getById(id);
+    const category = await categoriesService.getById(id);
 
-    if (!user) {
+    if (!category) {
       res.sendStatus(404);
 
       return;
     }
-    res.json(usersService.normalizeUser(user));
+    res.json(category);
   } catch (error) {
     res.sendStatus(500);
   }
@@ -49,15 +49,15 @@ const remove = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const todo = await usersService.getById(id);
+    const category = await categoriesService.getById(id);
 
-    if (!todo) {
+    if (!category) {
       res.sendStatus(404);
 
       return;
     }
 
-    await usersService.remove(id);
+    await categoriesService.remove(id);
 
     res.sendStatus(204);
   } catch (error) {
@@ -76,17 +76,17 @@ const update = async (req, res) => {
   }
 
   try {
-    const user = await usersService.getById(id);
+    const category = await categoriesService.getById(id);
 
-    if (!user) {
+    if (!category) {
       res.sendStatus(404);
 
       return;
     }
 
-    const updatedUser = await usersService.update({ id, name });
+    const updatedCategory = await categoriesService.update({ id, name });
 
-    res.json(usersService.normalizeUser(updatedUser));
+    res.json(updatedCategory);
   } catch (error) {
     res.sendStatus(500);
   }

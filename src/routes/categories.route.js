@@ -1,5 +1,5 @@
 const express = require('express');
-const usersController = require('../controllers/users.controller');
+const categoriesController = require('../controllers/categories.controller');
 
 const router = express.Router();
 
@@ -17,10 +17,10 @@ router.param('id', (req, res, next, id) => {
   next();
 });
 
-router.get('/', usersController.get);
-router.post('/', usersController.create);
-router.get('/:id', usersController.getOne);
-router.delete('/:id', usersController.remove);
-router.patch('/:id', usersController.update);
+router.get('/', categoriesController.get);
+router.post('/', categoriesController.create);
+router.get('/:id', categoriesController.getOne);
+router.delete('/:id', categoriesController.remove);
+router.patch('/:id', categoriesController.update);
 
 module.exports = router;
